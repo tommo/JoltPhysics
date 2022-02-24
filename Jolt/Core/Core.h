@@ -10,6 +10,8 @@
 	#define JPH_PLATFORM_WINDOWS
 #elif defined(__ANDROID__) // Android is linux too, so that's why we check it first
 	#define JPH_PLATFORM_ANDROID
+#elif defined(__APPLE__) && defined( __MACH__ )
+	#define JPH_PLATFORM_APPLE
 #elif defined(__linux__)
 	#define JPH_PLATFORM_LINUX
 #endif
@@ -107,7 +109,7 @@
 	// Creating one should only be a couple of minutes of work if you have the documentation for the platform 
 	// (you only need to define JPH_BREAKPOINT, JPH_PLATFORM_BLUE_GET_TICKS and JPH_PLATFORM_BLUE_GET_TICK_FREQUENCY and include the right header).
 	#include <Core/PlatformBlue.h> 
-#elif defined(JPH_PLATFORM_LINUX) || defined(JPH_PLATFORM_ANDROID)
+#elif defined(JPH_PLATFORM_LINUX) || defined(JPH_PLATFORM_ANDROID) || defined(JPH_PLATFORM_APPLE)
 	#include <float.h>
 	#include <limits.h>
 	#include <string.h>

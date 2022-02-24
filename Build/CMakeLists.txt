@@ -66,6 +66,29 @@ elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
 	# Set linker flags
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lpthread")
+elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+	# Set general compiler flags (do not use -ffast-math since it cannot be turned off in a single compilation unit)
+	set(CMAKE_CXX_FLAGS "-g -std=c++17 -I. -Wall -Werror")
+
+	# Platform specific compiler flags
+	if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "AMD64")
+		# X64
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -mf16c -mlzcnt -mpopcnt")
+	elseif ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
+		# ARM64
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	endif()
+
+	# Set compiler flags for various configurations
+	set(CMAKE_CXX_FLAGS_DEBUG "-D_DEBUG -DJPH_PROFILE_ENABLED -DJPH_DEBUG_RENDERER") # Clang reorders variables so that div by zero occurs if we enable exception checking
+	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DJPH_PROFILE_ENABLED -DJPH_DEBUG_RENDERER")
+	set(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3 -DNDEBUG")
+	set(CMAKE_CXX_FLAGS_RELEASEASAN "-DNDEBUG -DJPH_PROFILE_ENABLED -DJPH_DISABLE_TEMP_ALLOCATOR -DJPH_DEBUG_RENDERER -fsanitize=address")
+	set(CMAKE_CXX_FLAGS_RELEASEUBSAN "-DNDEBUG -DJPH_PROFILE_ENABLED -DJPH_DEBUG_RENDERER -fsanitize=undefined,implicit-conversion")
+	set(CMAKE_CXX_FLAGS_RELEASECOVERAGE "-DNDEBUG -fprofile-instr-generate -fcoverage-mapping")
+
+	# Set linker flags
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lpthread")
 endif()
 
 # Set linker flags
